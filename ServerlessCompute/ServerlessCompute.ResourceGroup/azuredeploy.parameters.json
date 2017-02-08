@@ -1,6 +1,63 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
+  "parameters": {
+    "workflows_email_to_powerbi_name": {
+      "value": null
+    },
+    "workflows_keynote_comment_live_name": {
+      "value": null
+    },
+    "workflows_keynote_comment_reciever_name": {
+      "value": null
+    },
+    "workflows_process_order_name": {
+      "value": null
+    },
+    "storageAccounts_functionfae8c4e68b99_name": {
+      "value": null
+    },
+    "serverfarms_AustraliaEastPlan_name": {
+      "value": null
+    },
+    "serverfarms_ignite_australia_asp_name": {
+      "value": null
+    },
+    "sites_serverlessshop_name": {
+      "value": null
+    },
+    "sites_igniteaustralia_name": {
+      "value": null
+    },
+    "workflows_email_to_powerbi_id": {
+      "value": null
+    },
+    "workflows_email_to_powerbi_connectionId": {
+      "value": null
+    },
+    "workflows_email_to_powerbi_connectionId_1": {
+      "value": null
+    },
+    "workflows_email_to_powerbi_connectionId_2": {
+      "value": null
+    },
+    "workflows_keynote_comment_live_id": {
+      "value": null
+    },
+    "workflows_keynote_comment_live_connectionId": {
+      "value": null
+    },
+    "workflows_keynote_comment_live_connectionId_1": {
+      "value": null
+    },
+    "workflows_keynote_comment_reciever_connectionId": {
+      "value": null
+    },
+    "workflows_process_order_connectionId": {
+      "value": null
+    },
+    "workflows_process_order_connectionId_1": {
+      "value": null
     }
+  }
 }

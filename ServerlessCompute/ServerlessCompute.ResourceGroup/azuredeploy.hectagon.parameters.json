@@ -1,0 +1,21 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+  "parameters": {
+    "storageAccounts_functionfae8c4e68b99_name": {
+      "value": "functionshectagon"
+    },
+    "serverfarms_AustraliaEastPlan_name": {
+      "value": "HectagonDynamicPlan"
+    },
+    "serverfarms_ignite_australia_asp_name": {
+      "value": "HectagonWebPlan"
+    },
+    "sites_serverlessshop_name": {
+      "value": "HectagonServerlessShop"
+    },
+    "sites_igniteaustralia_name": {
+      "value": "HectagonFunctions"
+    }    
+  }
+}
