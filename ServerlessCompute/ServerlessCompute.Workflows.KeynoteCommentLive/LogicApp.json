@@ -110,6 +110,22 @@
                   "Succeeded"
                 ]
               }
+            },
+            "listKeyPhrases": {
+              "inputs": {
+                "body": {
+                  "phrases": "@body('Key_Phrases')?['keyPhrases']"
+                },
+                "function": {
+                  "id": "/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ScottGu/providers/Microsoft.Web/sites/jehollanTwitter/functions/listKeyPhrases"
+                }
+              },
+              "runAfter": {
+                "Key_Phrases": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Function"
             }
           },
           "parameters": {
