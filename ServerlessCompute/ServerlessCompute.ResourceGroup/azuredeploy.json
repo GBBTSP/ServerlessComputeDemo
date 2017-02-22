@@ -21,9 +21,14 @@
     "sites_igniteaustralia_name": {
       "defaultValue": "igniteaustralia",
       "type": "string"
+    },
+    "serverlessShopRepoRUL": {
+      "type": "string",
+      "defaultValue": "https://github.com/GBBTSP/serverless-shop.git"
     }
   },
-  "variables": {},
+  "variables": {
+  },
   "resources": [
     {
       "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Storage/storageAccounts/functionfae8c4e68b99'.",
@@ -99,7 +104,22 @@
         "name": "[parameters('sites_serverlessshop_name')]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ignite_australia_asp_name'))]"
       },
-      "resources": [],
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('sites_serverlessshop_name'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('serverlessShopRepoRUL')]",
+            "branch": "master",
+            "IsManualIntegration": false
+          }
+        }
+
+      ],
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ignite_australia_asp_name'))]"
       ]
