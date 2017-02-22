@@ -2,52 +2,55 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "storageAccounts_functionfae8c4e68b99_name": {
+    "functionsStorageAccount": {
       "defaultValue": "functionfae8c4e68b99",
       "type": "string"
     },
-    "serverfarms_AustraliaEastPlan_name": {
+    "serverlessPlan": {
       "defaultValue": "AustraliaEastPlan",
       "type": "string"
     },
-    "serverfarms_ignite_australia_asp_name": {
+    "paasPlan": {
       "defaultValue": "ignite-australia-asp",
       "type": "string"
     },
-    "sites_serverlessshop_name": {
+    "storeFrontWebApp": {
       "defaultValue": "serverlessshop",
       "type": "string"
     },
-    "sites_igniteaustralia_name": {
+    "functionApp": {
       "defaultValue": "igniteaustralia",
       "type": "string"
     },
-    "serverlessShopRepoRUL": {
+    "storeFrontRepoURL": {
       "type": "string",
       "defaultValue": "https://github.com/GBBTSP/serverless-shop.git"
+    },
+    "functionAppRepoURL": {
+      "type": "string",
+      "defaultValue": "https://github.com/GBBTSP/ServerlessComputeFunctions.git"
     }
   },
   "variables": {
   },
   "resources": [
     {
-      "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Storage/storageAccounts/functionfae8c4e68b99'.",
       "type": "Microsoft.Storage/storageAccounts",
       "sku": {
         "name": "Standard_LRS",
         "tier": "Standard"
       },
       "kind": "Storage",
-      "name": "[parameters('storageAccounts_functionfae8c4e68b99_name')]",
+      "name": "[parameters('functionsStorageAccount')]",
       "apiVersion": "2016-01-01",
       "location": "australiaeast",
-      "tags": {},
+      "tags": {
+      },
       "properties": {},
       "resources": [],
       "dependsOn": []
     },
     {
-      "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/serverfarms/AustraliaEastPlan'.",
       "type": "Microsoft.Web/serverfarms",
       "sku": {
         "name": "Y1",
@@ -57,11 +60,11 @@
         "capacity": 0
       },
       "kind": "functionapp",
-      "name": "[parameters('serverfarms_AustraliaEastPlan_name')]",
+      "name": "[parameters('serverlessPlan')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "properties": {
-        "name": "[parameters('serverfarms_AustraliaEastPlan_name')]",
+        "name": "[parameters('serverlessPlan')]",
         "numberOfWorkers": 0
       },
       "resources": [],
@@ -78,31 +81,31 @@
         "capacity": 1
       },
       "kind": "app",
-      "name": "[parameters('serverfarms_ignite_australia_asp_name')]",
+      "name": "[parameters('paasPlan')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "properties": {
-        "name": "[parameters('serverfarms_ignite_australia_asp_name')]",
+        "name": "[parameters('paasPlan')]",
         "numberOfWorkers": 1
       },
       "resources": [],
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_AustraliaEastPlan_name'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
       ]
     },
     {
       "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/sites/serverlessshop'.",
       "type": "Microsoft.Web/sites",
       "kind": "app",
-      "name": "[parameters('sites_serverlessshop_name')]",
+      "name": "[parameters('storeFrontWebApp')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "tags": {
         "hidden-related:/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourcegroups/ignite-australia/providers/Microsoft.Web/serverfarms/ignite-australia-asp": "empty"
       },
       "properties": {
-        "name": "[parameters('sites_serverlessshop_name')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ignite_australia_asp_name'))]"
+        "name": "[parameters('storeFrontWebApp')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
       },
       "resources": [
         {
@@ -110,10 +113,10 @@
           "name": "web",
           "type": "sourcecontrols",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('sites_serverlessshop_name'))]"
+            "[resourceId('Microsoft.Web/Sites', parameters('storeFrontWebApp'))]"
           ],
           "properties": {
-            "RepoUrl": "[parameters('serverlessShopRepoRUL')]",
+            "RepoUrl": "[parameters('storeFrontRepoURL')]",
             "branch": "master",
             "IsManualIntegration": false
           }
@@ -121,23 +124,37 @@
 
       ],
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ignite_australia_asp_name'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
       ]
     },
     {
       "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/sites/igniteaustralia'.",
       "type": "Microsoft.Web/sites",
       "kind": "functionapp",
-      "name": "[parameters('sites_igniteaustralia_name')]",
+      "name": "[parameters('functionApp')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "properties": {
-        "name": "[parameters('sites_igniteaustralia_name')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_AustraliaEastPlan_name'))]"
+        "name": "[parameters('functionApp')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
       },
-      "resources": [],
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('functionApp'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('functionAppRepoURL')]",
+            "branch": "master",
+            "IsManualIntegration": false
+          }
+        }
+      ],
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_AustraliaEastPlan_name'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
       ]
     }
   ]
