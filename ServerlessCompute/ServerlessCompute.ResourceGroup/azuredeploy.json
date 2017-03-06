@@ -29,6 +29,9 @@
     "functionAppRepoURL": {
       "type": "string",
       "defaultValue": "https://github.com/GBBTSP/ServerlessComputeFunctions.git"
+    },
+    "cognitiveservicestextanalytics_Connection_Name": {
+      "type": "string"
     }
   },
   "variables": {
@@ -173,6 +176,24 @@
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
       ]
+    },
+    ,
+    {
+      "type": "Microsoft.Web/Connections",
+      "apiVersion": "2016-06-01",
+      "name": "[parameters('cognitiveservicestextanalytics_1_Connection_Name')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "api": {
+          "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'cognitiveservicestextanalytics')]"
+        },
+        "parameterValues": {
+          "apiKey": "[parameters('cognitiveservicestextanalytics_apiKey')]"
+        }
+      },
+      "tags": {
+        "displayName": "Cognitive Services Text Analytics Connection"
+      }
     }
   ]
 }
