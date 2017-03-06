@@ -45,6 +45,7 @@
       "apiVersion": "2016-01-01",
       "location": "australiaeast",
       "tags": {
+        "displayName": "Storage Account"
       },
       "properties": {},
       "resources": [],
@@ -68,64 +69,10 @@
         "numberOfWorkers": 0
       },
       "resources": [],
-      "dependsOn": []
-    },
-    {
-      "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/serverfarms/ignite-australia-asp'.",
-      "type": "Microsoft.Web/serverfarms",
-      "sku": {
-        "name": "S1",
-        "tier": "Standard",
-        "size": "S1",
-        "family": "S",
-        "capacity": 1
-      },
-      "kind": "app",
-      "name": "[parameters('paasPlan')]",
-      "apiVersion": "2015-08-01",
-      "location": "Australia East",
-      "properties": {
-        "name": "[parameters('paasPlan')]",
-        "numberOfWorkers": 1
-      },
-      "resources": [],
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
-      ]
-    },
-    {
-      "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/sites/serverlessshop'.",
-      "type": "Microsoft.Web/sites",
-      "kind": "app",
-      "name": "[parameters('storeFrontWebApp')]",
-      "apiVersion": "2015-08-01",
-      "location": "Australia East",
+      "dependsOn": [],
       "tags": {
-        "hidden-related:/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourcegroups/ignite-australia/providers/Microsoft.Web/serverfarms/ignite-australia-asp": "empty"
-      },
-      "properties": {
-        "name": "[parameters('storeFrontWebApp')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
-      },
-      "resources": [
-        {
-          "apiVersion": "2015-08-01",
-          "name": "web",
-          "type": "sourcecontrols",
-          "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('storeFrontWebApp'))]"
-          ],
-          "properties": {
-            "RepoUrl": "[parameters('storeFrontRepoURL')]",
-            "branch": "master",
-            "IsManualIntegration": false
-          }
-        }
-
-      ],
-      "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
-      ]
+        "displayName": "Serverless Plan"
+      }
     },
     {
       "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/sites/igniteaustralia'.",
@@ -150,11 +97,81 @@
             "RepoUrl": "[parameters('functionAppRepoURL')]",
             "branch": "master",
             "IsManualIntegration": false
+          },
+          "tags": {
+            "displayName": "Function App Source Code Repo"
           }
         }
       ],
       "dependsOn": [
         "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
+      ],
+      "tags": {
+        "displayName": "Function App"
+      }
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/serverfarms/ignite-australia-asp'.",
+      "type": "Microsoft.Web/serverfarms",
+      "sku": {
+        "name": "S1",
+        "tier": "Standard",
+        "size": "S1",
+        "family": "S",
+        "capacity": 1
+      },
+      "kind": "app",
+      "name": "[parameters('paasPlan')]",
+      "apiVersion": "2015-08-01",
+      "location": "Australia East",
+      "properties": {
+        "name": "[parameters('paasPlan')]",
+        "numberOfWorkers": 1
+      },
+      "resources": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
+      ],
+      "tags": {
+        "displayName": "Web UI PaaS Plan"
+      }
+    },
+    {
+      "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/sites/serverlessshop'.",
+      "type": "Microsoft.Web/sites",
+      "kind": "app",
+      "name": "[parameters('storeFrontWebApp')]",
+      "apiVersion": "2015-08-01",
+      "location": "Australia East",
+      "tags": {
+        "displayName": "Web UI Web App",
+        "hidden-related:/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourcegroups/ignite-australia/providers/Microsoft.Web/serverfarms/ignite-australia-asp": "empty"
+      },
+      "properties": {
+        "name": "[parameters('storeFrontWebApp')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', parameters('storeFrontWebApp'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[parameters('storeFrontRepoURL')]",
+            "branch": "master",
+            "IsManualIntegration": false
+          },
+          "tags": {
+            "displayName": "Web UI Source Code Repo"
+          }
+        }
+
+      ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
       ]
     }
   ]
