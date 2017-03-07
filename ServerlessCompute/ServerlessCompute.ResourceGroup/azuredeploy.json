@@ -30,9 +30,6 @@
       "type": "string",
       "defaultValue": "https://github.com/GBBTSP/ServerlessComputeFunctions.git"
     },
-    "cognitiveservicestextanalytics_apiKey": {
-      "type": "securestring"
-    },
     "ServiceBusNamespacePrefix": {
       "type": "string"
     },
@@ -190,29 +187,26 @@
           "tags": {
             "displayName": "Web UI Source Code Repo"
           }
+        },
+        {
+          "name": "appsettings",
+          "type": "config",
+          "apiVersion": "2015-08-01",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('webUiWebAppName'))]"
+          ],
+          "tags": {
+            "displayName": "Web UI AppSettings"
+          },
+          "properties": {
+            "ProcessOrderUrl": "[reference(concat('Microsoft.Logic/workflows/', parameters('ProcessOrderLogicAppName')), '2016-06-01').accessEndpoint]"
+          }
         }
-
       ],
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', variables('paasPlanName'))]"
+        "[resourceId('Microsoft.Web/serverfarms', variables('paasPlanName'))]",
+        "[resourceId('Microsoft.Logic/workflows', parameters('ProcessOrderLogicAppName'))]"
       ]
-    },
-    {
-      "type": "Microsoft.Web/Connections",
-      "apiVersion": "2016-06-01",
-      "name": "CognitiveServicesTextAnalyticsConnection",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "api": {
-          "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'cognitiveservicestextanalytics')]"
-        },
-        "parameterValues": {
-          "apiKey": "[parameters('cognitiveservicestextanalytics_apiKey')]"
-        }
-      },
-      "tags": {
-        "displayName": "Cognitive Services Text Analytics Connection"
-      }
     },
     {
       "name": "[variables('serviceBusNamespace')]",
