@@ -8,6 +8,7 @@
     "webUiWebAppNamePrefix": { "value": "SlessShop" },
     "functionAppNamePrefix": { "value": "SlessApp" },
     "webUiRepoURL": { "value": "https://github.com/GBBTSP/serverless-shop.git" },
-    "functionAppRepoURL": { "value": "https://github.com/GBBTSP/ServerlessComputeFunctions.git" }
+    "functionAppRepoURL": { "value": "https://github.com/GBBTSP/ServerlessComputeFunctions.git" },
+    "ProcessOrderLogicAppName": {"value": "ProcessOrder"}
   }
 }

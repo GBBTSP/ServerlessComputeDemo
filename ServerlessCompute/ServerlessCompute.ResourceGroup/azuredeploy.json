@@ -32,6 +32,14 @@
     },
     "cognitiveservicestextanalytics_apiKey": {
       "type": "securestring"
+    },
+    "ProcessOrderLogicAppName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80,
+      "metadata": {
+        "description": "Name of the Logic App."
+      }
     }
   },
   "variables": {
@@ -197,6 +205,88 @@
       },
       "tags": {
         "displayName": "Cognitive Services Text Analytics Connection"
+      }
+    },
+    {
+      "name": "[parameters('ProcessOrderLogicAppName')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-06-01",
+      "dependsOn": [],
+      "tags": {
+        "displayName": "ProcessOrder Logic App"
+      },
+      "properties": {
+        {
+          "definition": {
+            "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+            "actions": {
+              "Response": {
+                "inputs": {
+                  "body": {
+                    "message": "Order placed and processed successfully. Check your email for a confirmation."
+                  },
+                  "statusCode": 200
+                },
+                "runAfter": {
+                  "ValidateOrder": [
+                    "Succeeded"
+                  ]
+                },
+                "type": "Response"
+              },
+              "ValidateOrder": {
+                "inputs": {
+                  "body": "@triggerBody()",
+                  "function": {
+                    "id": "/subscriptions/114d25c4-3f8f-4c41-83b1-22007178fc8c/resourceGroups/ServerlessCompute/providers/Microsoft.Web/sites/serverlessappseq6muj66k4cg/functions/ValidateOrder"
+                  }
+                },
+                "runAfter": {},
+                "type": "Function"
+              }
+            },
+            "contentVersion": "1.0.0.0",
+            "outputs": {},
+            "parameters": {},
+            "triggers": {
+              "manual": {
+                "inputs": {
+                  "schema": {
+                    "$schema": "http://json-schema.org/draft-04/schema#",
+                    "properties": {
+                      "Address": {
+                        "type": "string"
+                      },
+                      "CreditCard": {
+                        "type": "string"
+                      },
+                      "Email": {
+                        "type": "string"
+                      },
+                      "Name": {
+                        "type": "string"
+                      },
+                      "Price": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [
+                      "Name",
+                      "Address",
+                      "Email",
+                      "CreditCard",
+                      "Price"
+                    ],
+                    "type": "object"
+                  }
+                },
+                "kind": "Http",
+                "type": "Request"
+              }
+            }
+          }
+        }
       }
     }
   ]
