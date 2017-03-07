@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "ServerlessCompute.ResourceGroup", "ServerlessCompute.ResourceGroup\ServerlessCompute.ResourceGroup.deployproj", "{657BE736-7EB6-4D75-8ABE-F1CEDB62F473}"
 EndProject
-Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "ServerlessCompute.LogicApps.KeynoteComments", "ServerlessCompute.LogicApps.KeynoteComments\ServerlessCompute.LogicApps.KeynoteComments.deployproj", "{CDD37E2D-4744-483E-8661-309D9D4CAFFD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,10 +15,6 @@ Global
 		{657BE736-7EB6-4D75-8ABE-F1CEDB62F473}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{657BE736-7EB6-4D75-8ABE-F1CEDB62F473}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{657BE736-7EB6-4D75-8ABE-F1CEDB62F473}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CDD37E2D-4744-483E-8661-309D9D4CAFFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CDD37E2D-4744-483E-8661-309D9D4CAFFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CDD37E2D-4744-483E-8661-309D9D4CAFFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CDD37E2D-4744-483E-8661-309D9D4CAFFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
