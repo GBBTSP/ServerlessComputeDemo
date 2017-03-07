@@ -2,27 +2,27 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "functionsStorageAccount": {
-      "defaultValue": "functionfae8c4e68b99",
+    "functionsStorageAccountNamePrefix": {
+      "defaultValue": "funcstrg",
       "type": "string"
     },
-    "serverlessPlan": {
-      "defaultValue": "AustraliaEastPlan",
+    "serverlessPlanNamePrefix": {
+      "defaultValue": "SlessPlan",
       "type": "string"
     },
-    "paasPlan": {
-      "defaultValue": "ignite-australia-asp",
+    "paasPlanNamePrefix": {
+      "defaultValue": "PaasPlan",
       "type": "string"
     },
-    "storeFrontWebApp": {
+    "webUiWebAppNamePrefix": {
       "defaultValue": "serverlessshop",
       "type": "string"
     },
-    "functionApp": {
-      "defaultValue": "igniteaustralia",
+    "functionAppNamePrefix": {
+      "defaultValue": "serverlessapp",
       "type": "string"
     },
-    "storeFrontRepoURL": {
+    "webUiRepoURL": {
       "type": "string",
       "defaultValue": "https://github.com/GBBTSP/serverless-shop.git"
     },
@@ -30,11 +30,16 @@
       "type": "string",
       "defaultValue": "https://github.com/GBBTSP/ServerlessComputeFunctions.git"
     },
-    "cognitiveservicestextanalytics_Connection_Name": {
-      "type": "string"
+    "cognitiveservicestextanalytics_apiKey": {
+      "type": "securestring"
     }
   },
   "variables": {
+    "functionsStorageAccountName": "[concat(parameters('functionsStorageAccountNamePrefix'), uniqueString(resourceGroup().id) )]",
+    "serverlessPlanName": "[concat(parameters('serverlessPlanNamePrefix'), uniqueString(resourceGroup().id))]",
+    "paasPlanName": "[concat(parameters('paasPlanNamePrefix'), uniqueString(resourceGroup().id))]",
+    "webUiWebAppName": "[concat(parameters('webUiWebAppNamePrefix'), uniqueString(resourceGroup().id))]",
+    "functionAppName": "[concat(parameters('functionAppNamePrefix'), uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
@@ -44,7 +49,7 @@
         "tier": "Standard"
       },
       "kind": "Storage",
-      "name": "[parameters('functionsStorageAccount')]",
+      "name": "[variables('functionsStorageAccountName')]",
       "apiVersion": "2016-01-01",
       "location": "australiaeast",
       "tags": {
@@ -64,11 +69,11 @@
         "capacity": 0
       },
       "kind": "functionapp",
-      "name": "[parameters('serverlessPlan')]",
+      "name": "[variables('serverlessPlanName')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "properties": {
-        "name": "[parameters('serverlessPlan')]",
+        "name": "[variables('serverlessPlanName')]",
         "numberOfWorkers": 0
       },
       "resources": [],
@@ -81,12 +86,12 @@
       "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/sites/igniteaustralia'.",
       "type": "Microsoft.Web/sites",
       "kind": "functionapp",
-      "name": "[parameters('functionApp')]",
+      "name": "[variables('functionAppName')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "properties": {
-        "name": "[parameters('functionApp')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
+        "name": "[variables('functionAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverlessPlanName'))]"
       },
       "resources": [
         {
@@ -94,7 +99,7 @@
           "name": "web",
           "type": "sourcecontrols",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('functionApp'))]"
+            "[resourceId('Microsoft.Web/Sites', variables('functionAppName'))]"
           ],
           "properties": {
             "RepoUrl": "[parameters('functionAppRepoURL')]",
@@ -107,7 +112,7 @@
         }
       ],
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
+        "[resourceId('Microsoft.Web/serverfarms', variables('serverlessPlanName'))]"
       ],
       "tags": {
         "displayName": "Function App"
@@ -124,16 +129,16 @@
         "capacity": 1
       },
       "kind": "app",
-      "name": "[parameters('paasPlan')]",
+      "name": "[variables('paasPlanName')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "properties": {
-        "name": "[parameters('paasPlan')]",
+        "name": "[variables('paasPlanName')]",
         "numberOfWorkers": 1
       },
       "resources": [],
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverlessPlan'))]"
+        "[resourceId('Microsoft.Web/serverfarms', variables('serverlessPlanName'))]"
       ],
       "tags": {
         "displayName": "Web UI PaaS Plan"
@@ -143,7 +148,7 @@
       "comments": "Generalized from resource: '/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourceGroups/ignite-australia/providers/Microsoft.Web/sites/serverlessshop'.",
       "type": "Microsoft.Web/sites",
       "kind": "app",
-      "name": "[parameters('storeFrontWebApp')]",
+      "name": "[variables('webUiWebAppName')]",
       "apiVersion": "2015-08-01",
       "location": "Australia East",
       "tags": {
@@ -151,8 +156,8 @@
         "hidden-related:/subscriptions/80d4fe69-c95b-4dd2-a938-9250f1c8ab03/resourcegroups/ignite-australia/providers/Microsoft.Web/serverfarms/ignite-australia-asp": "empty"
       },
       "properties": {
-        "name": "[parameters('storeFrontWebApp')]",
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
+        "name": "[variables('webUiWebAppName')]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('paasPlanName'))]"
       },
       "resources": [
         {
@@ -160,10 +165,10 @@
           "name": "web",
           "type": "sourcecontrols",
           "dependsOn": [
-            "[resourceId('Microsoft.Web/Sites', parameters('storeFrontWebApp'))]"
+            "[resourceId('Microsoft.Web/Sites', variables('webUiWebAppName'))]"
           ],
           "properties": {
-            "RepoUrl": "[parameters('storeFrontRepoURL')]",
+            "RepoUrl": "[parameters('webUiRepoURL')]",
             "branch": "master",
             "IsManualIntegration": false
           },
@@ -174,14 +179,13 @@
 
       ],
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('paasPlan'))]"
+        "[resourceId('Microsoft.Web/serverfarms', variables('paasPlanName'))]"
       ]
     },
-    ,
     {
       "type": "Microsoft.Web/Connections",
       "apiVersion": "2016-06-01",
-      "name": "[parameters('cognitiveservicestextanalytics_1_Connection_Name')]",
+      "name": "CognitiveServicesTextAnalyticsConnection",
       "location": "[resourceGroup().location]",
       "properties": {
         "api": {
