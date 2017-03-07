@@ -33,6 +33,12 @@
     "cognitiveservicestextanalytics_apiKey": {
       "type": "securestring"
     },
+    "ServiceBusNamespacePrefix": {
+      "type": "string"
+    },
+    "ServiceBusQueueName": {
+      "type": "string"
+    },
     "ProcessOrderLogicAppName": {
       "type": "string",
       "minLength": 1,
@@ -47,7 +53,8 @@
     "serverlessPlanName": "[concat(parameters('serverlessPlanNamePrefix'), uniqueString(resourceGroup().id))]",
     "paasPlanName": "[concat(parameters('paasPlanNamePrefix'), uniqueString(resourceGroup().id))]",
     "webUiWebAppName": "[concat(parameters('webUiWebAppNamePrefix'), uniqueString(resourceGroup().id))]",
-    "functionAppName": "[concat(parameters('functionAppNamePrefix'), uniqueString(resourceGroup().id))]"
+    "functionAppName": "[concat(parameters('functionAppNamePrefix'), uniqueString(resourceGroup().id))]",
+    "serviceBusNamespace": "[concat(parameters('ServiceBusNamespacePrefix'), uniqueString(resourceGroup().id))]"
   },
   "resources": [
     {
@@ -208,82 +215,129 @@
       }
     },
     {
+      "name": "[variables('serviceBusNamespace')]",
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2015-08-01",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Service Bus Namespace"
+      },
+      "kind": "messaging",
+      "sku": {
+        "name": "StandardSku",
+        "tier": "Standard"
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "[parameters('ServiceBusQueueName')]",
+          "type": "Queues",
+          "tags": {
+            "displayName": "Service Bus Queue"
+          },
+          "dependsOn": [
+            "[concat('Microsoft.ServiceBus/namespaces/', variables('serviceBusNamespace'))]"
+          ],
+          "properties": {
+            "path": "[parameters('ServiceBusQueueName')]"
+          }
+        }
+      ]
+    },
+    {
       "name": "[parameters('ProcessOrderLogicAppName')]",
       "type": "Microsoft.Logic/workflows",
       "location": "[resourceGroup().location]",
       "apiVersion": "2016-06-01",
-      "dependsOn": [],
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/Sites', variables('functionAppName'))]"
+      ],
       "tags": {
         "displayName": "ProcessOrder Logic App"
       },
       "properties": {
-        {
-          "definition": {
-            "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-            "actions": {
-              "Response": {
-                "inputs": {
-                  "body": {
-                    "message": "Order placed and processed successfully. Check your email for a confirmation."
-                  },
-                  "statusCode": 200
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "actions": {
+            "Response": {
+              "inputs": {
+                "body": {
+                  "message": "Order placed and processed successfully. Check your email for a confirmation."
                 },
-                "runAfter": {
-                  "ValidateOrder": [
-                    "Succeeded"
-                  ]
-                },
-                "type": "Response"
+                "statusCode": 200
               },
-              "ValidateOrder": {
-                "inputs": {
-                  "body": "@triggerBody()",
-                  "function": {
-                    "id": "/subscriptions/114d25c4-3f8f-4c41-83b1-22007178fc8c/resourceGroups/ServerlessCompute/providers/Microsoft.Web/sites/serverlessappseq6muj66k4cg/functions/ValidateOrder"
-                  }
-                },
-                "runAfter": {},
-                "type": "Function"
-              }
+              "runAfter": {
+                "ValidateOrder": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Response"
             },
-            "contentVersion": "1.0.0.0",
-            "outputs": {},
-            "parameters": {},
-            "triggers": {
-              "manual": {
-                "inputs": {
-                  "schema": {
-                    "$schema": "http://json-schema.org/draft-04/schema#",
-                    "properties": {
-                      "Address": {
-                        "type": "string"
-                      },
-                      "CreditCard": {
-                        "type": "string"
-                      },
-                      "Email": {
-                        "type": "string"
-                      },
-                      "Name": {
-                        "type": "string"
-                      },
-                      "Price": {
-                        "type": "number"
-                      }
-                    },
-                    "required": [
-                      "Name",
-                      "Address",
-                      "Email",
-                      "CreditCard",
-                      "Price"
-                    ],
-                    "type": "object"
-                  }
+            "ValidateOrder": {
+              "inputs": {
+                "body": "@triggerBody()",
+                "function": {
+                  "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/sites/', variables('functionAppName'), '/functions/ValidateOrder')]"
+                }
+              },
+              "runAfter": {},
+              "type": "Function"
+            },
+            "ChargeCustomer": {
+              "inputs": {
+                "body": {
+                  "card": "@triggerBody()['CreditCard']",
+                  "price": "@triggerBody()['Price']"
                 },
-                "kind": "Http",
-                "type": "Request"
-              }
+                "function": {
+                  "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/sites/', variables('functionAppName'), '/functions/ChargeCustomer')]"
+                }
+              },
+              "runAfter": {
+                "Response": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Function"
+            }
+          },
+          "contentVersion": "1.0.0.0",
+          "outputs": {},
+          "parameters": {},
+          "triggers": {
+            "manual": {
+              "inputs": {
+                "schema": {
+                  "$schema": "http://json-schema.org/draft-04/schema#",
+                  "properties": {
+                    "Address": {
+                      "type": "string"
+                    },
+                    "CreditCard": {
+                      "type": "string"
+                    },
+                    "Email": {
+                      "type": "string"
+                    },
+                    "Name": {
+                      "type": "string"
+                    },
+                    "Price": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "Name",
+                    "Address",
+                    "Email",
+                    "CreditCard",
+                    "Price"
+                  ],
+                  "type": "object"
+                }
+              },
+              "kind": "Http",
+              "type": "Request"
             }
           }
         }
